@@ -168,6 +168,45 @@ class TitleState extends MusicBeatState
 			Highscore.weekCompleted = FlxG.save.data.weekCompleted;
 		}
 
+			#if mobile
+		for (touch in FlxG.touches.list)
+		{
+			if (touch.justPressed)
+			{
+				pressedEnter = true;
+			}
+		}
+		#end
+
+		var gamepad:FlxGamepad = FlxG.gamepads.lastActive;
+
+		if (gamepad != null)
+		{
+			if (gamepad.justPressed.START)
+				pressedEnter = true;
+
+			#if switch
+			if (gamepad.justPressed.B)
+				pressedEnter = true;
+			#end
+		}
+
+		if (pressedEnter && transitioning && skippedIntro) {
+			FlxG.camera.stopFX();// FlxG.camera.visible = false;
+			goToMainMenu();
+		}
+
+		if (pressedEnter && !transitioning && skippedIntro)
+		{
+			pressEnter();
+		}
+
+		if (pressedEnter && !skippedIntro)
+			skipIntro();
+
+		super.update(elapsed);
+	}
+
 		FlxG.mouse.visible = false;
 		#if FREEPLAY
 		MusicBeatState.switchState(new FreeplayState());
